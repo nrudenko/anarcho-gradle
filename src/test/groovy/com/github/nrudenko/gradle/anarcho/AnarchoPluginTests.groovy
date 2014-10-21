@@ -1,5 +1,8 @@
 package com.github.nrudenko.gradle.anarcho
 
+import com.github.nrudenko.gradle.anarcho.fixtures.extensions.AppExtension
+import com.github.nrudenko.gradle.anarcho.fixtures.extensions.ApplicationVariant
+import org.junit.Before
 import org.junit.Test
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.api.Project
@@ -7,32 +10,27 @@ import org.gradle.api.Project
 import static org.junit.Assert.*
 
 class AnarchoPluginTests {
-    @Test
-    public void canAddTaskToProject() {
-        Project project = ProjectBuilder.builder().build()
-        def task = project.task('upload', type: AnarchoUploadTask)
-        assertTrue(task instanceof AnarchoUploadTask)
+
+    Project project
+
+    @Before
+    public void setUp() {
+        // fake a project
+        project = ProjectBuilder
+                .builder()
+                .build()
+        def ext = project.extensions.create("android", AppExtension)
+        ext.addApplicationVariant(new ApplicationVariant("Debug"))
+        ext.addApplicationVariant(new ApplicationVariant("Release"))
+
+        project.apply plugin: 'anarcho'
     }
 
     @Test
-    public void canPluginAddTaskToProject() {
-        Project project = ProjectBuilder.builder().build()
-        project.apply plugin: 'anarcho'
-        assertTrue(project.tasks.upload instanceof AnarchoUploadTask)
+    public void canAddTaskForBuildVariants() {
+        assertTrue(project.tasks.uploadDebug instanceof AnarchoUploadTask)
+        assertTrue(project.tasks.uploadRelease instanceof AnarchoUploadTask)
     }
 
-    @Test
-    public void canGetExtConfig() {
-        Project project = ProjectBuilder.builder().build()
-        project.apply plugin: 'anarcho'
-        println project.anarcho.host
-    }
 
-    @Test
-    public void canHandleAllApplicationVariants() {
-        Project project = ProjectBuilder.builder().build()
-        project.
-        project.apply plugin: 'anarcho'
-        println project.anarcho.host
-    }
 }

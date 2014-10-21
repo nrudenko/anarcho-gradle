@@ -1,0 +1,69 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.3'
+    }
+}
+
+group = 'com.github.nrudenko'
+version = '0.1.6'
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'nexus'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+    compile 'org.apache.httpcomponents:httpmime:4.4-beta1'
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.artifactId = 'anarcho-gradle'
+    }
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        pom.artifactId = 'anarcho-gradle'
+    }
+}
+
+modifyPom {
+    project {
+        name 'Gradle Android CodeQuality Plugin'
+        description "A Gradle plugin which added tasks for checking java code quality for android projects"
+        url 'https://github.com/nrudenko/anarcho-gradle'
+        inceptionYear '2014'
+
+        scm {
+            url 'https://github.com/nrudenko/anarcho-gradle'
+            connection 'scm:git:git://github.com/nrudenko/anarcho-gradle.git'
+            developerConnection 'scm:git:ssh://git@github.com:nrudenko/anarcho-gradle.git'
+        }
+
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'nrudenko'
+                name 'Nikolay Rudenko'
+                email 'r.nikolay.e@gmail.com'
+            }
+        }
+    }
+}

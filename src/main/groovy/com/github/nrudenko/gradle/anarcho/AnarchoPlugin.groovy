@@ -26,7 +26,7 @@ class AnarchoPlugin implements Plugin<Project> {
 }
 
 class AnarchoExtension {
-    String host = 'http://54.164.28.98/'
-    String endpoint = 'api/add_build'
+    String host
+    String endPoint = '/api/apps/'
     String apiToken
 }

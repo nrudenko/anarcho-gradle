@@ -15,6 +15,7 @@ class AnarchoPlugin implements Plugin<Project> {
                 group "Deploy"
                 variant = v
             }
+            task.dependsOn("clean")
             task.dependsOn("assemble${variantName}")
         }
 
@@ -29,4 +30,5 @@ class AnarchoExtension {
     String host
     String endPoint = '/api/apps/'
     String apiToken
+    String appKey
 }

@@ -23,14 +23,13 @@ class AnarchoUploadTask extends DefaultTask {
     @TaskAction
     def doUpload() {
         def conf = project.anarcho
-        println("${conf.host} ${conf.apiToken} ${variant.outputs.outputFile}")
+        println("${conf.uploadUrl} ${conf.apiToken} ${variant.outputs.outputFile}")
         variant.outputs.outputFile.each {
-            uploadBuild("${conf.host}${conf.endPoint}", it, "trololo", conf.apiToken)
+            uploadBuild(conf.uploadUrl, it, "empty", conf.apiToken)
         }
     }
 
     void uploadBuild(String url, File apkFile, String releaseNotes, String apiToken) {
-
         def http = new HTTPBuilder(url)
 
         http.request(Method.POST) { req ->

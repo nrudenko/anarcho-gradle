@@ -8,7 +8,7 @@ buildscript {
 }
 
 group = 'com.github.nrudenko'
-version = '0.1.7'
+version = '0.1.8'
 
 apply plugin: 'groovy'
 apply plugin: 'maven'
@@ -39,8 +39,8 @@ uploadArchives {
 
 modifyPom {
     project {
-        name 'Gradle Android CodeQuality Plugin'
-        description "A Gradle plugin which added tasks for checking java code quality for android projects"
+        name 'Anarcho deployment plugin'
+        description "Gradle plugin which allow to deploy apks to Anarcho"
         url 'https://github.com/nrudenko/anarcho-gradle'
         inceptionYear '2014'
 

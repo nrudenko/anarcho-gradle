@@ -9,14 +9,13 @@ class AnarchoPlugin implements Plugin<Project> {
     def void apply(Project project) {
         project.android.applicationVariants.all { v ->
             def variantName = v.name.capitalize()
-
-            def task = project.task("upload${variantName}", type: AnarchoUploadTask) {
-                description "Clean, assemble and upload ${variantName} apk to Anarcho"
+            def taskName = "upload${variantName}"
+            project.task(taskName, type: AnarchoUploadTask,
+                    dependsOn: "assemble${variantName}") {
+                description "Assemble and upload ${variantName} apk to Anarcho"
                 group "Deploy"
                 variant = v
             }
-            task.dependsOn("clean")
-            task.dependsOn("assemble${variantName}")
         }
 
         project.configure(project) {
@@ -27,8 +26,7 @@ class AnarchoPlugin implements Plugin<Project> {
 }
 
 class AnarchoExtension {
-    String host
-    String endPoint = '/api/apps/'
+    String uploadUrl
     String apiToken
-    String appKey
+    String releaseNotesFile
 }

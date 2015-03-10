@@ -74,4 +74,10 @@ class AnarchoPluginTests {
         })
     }
 
+    @Test
+    public void shouldProcessGitCommit() {
+        String notes = "BuildType: {build_type}\nBranch: {git_branch}\nCommit: {git_commit}"
+        println new ReleaseNotesProcessor("release").process(notes)
+    }
+
 }

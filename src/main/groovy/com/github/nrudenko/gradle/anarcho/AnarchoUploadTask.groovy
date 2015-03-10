@@ -27,8 +27,10 @@ class AnarchoUploadTask extends DefaultTask {
         }
         println("\n\nUploading: ${variant.outputs.outputFile}")
         String uploadUrl = "${anarchoExt.host}/api/apps/${config.appKey}".replaceAll("//api", "/api")
+
+        String releaseNotes = new ReleaseNotesProcessor(variant.name).process(config.releaseNotes)
         variant.outputs.outputFile.each { apkFile ->
-            uploadBuild(uploadUrl, apkFile, config.releaseNotes, config.apiToken)
+            uploadBuild(uploadUrl, apkFile, releaseNotes, config.apiToken)
         }
     }
 

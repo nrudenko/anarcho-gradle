@@ -1,7 +1,10 @@
 package com.github.nrudenko.gradle.anarcho
 
+import groovy.transform.ToString
 import org.gradle.api.Plugin
-import org.gradle.api.Project;
+import org.gradle.api.Project
+import org.gradle.api.internal.FactoryNamedDomainObjectContainer
+
 
 class AnarchoPlugin implements Plugin<Project> {
 
@@ -18,15 +21,37 @@ class AnarchoPlugin implements Plugin<Project> {
             }
         }
 
-        project.configure(project) {
-            extensions.create("anarcho", AnarchoExtension)
-        }
+        project.extensions.anarcho = new AnarchoExtension()
+        project.extensions.anarcho.buildTypes = project.container(AppConfig)
     }
 
 }
 
+@ToString
 class AnarchoExtension {
-    String uploadUrl
+    String host
+    FactoryNamedDomainObjectContainer<AppConfig> buildTypes
+
+    def buildTypes(Closure types) {
+        buildTypes.configure(types)
+    }
+}
+
+@ToString
+class AppConfig {
+    final String name
+
+    String appKey
     String apiToken
-    String releaseNotesFile
+    String releaseNotes
+
+    AppConfig(String name) {
+        this.name = name
+    }
+
+    def update(AppConfig config) {
+        this.appKey = config.appKey ? config.appKey : this.appKey
+        this.apiToken = config.apiToken ? config.apiToken : this.apiToken
+        this.releaseNotes = config.releaseNotes ? config.releaseNotes : this.releaseNotes
+    }
 }

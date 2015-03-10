@@ -19,10 +19,16 @@ class AnarchoUploadTask extends DefaultTask {
 
     @TaskAction
     def doUpload() {
-        def conf = project.anarcho
+        AnarchoExtension anarchoExt = project.anarcho
+        AppConfig config = anarchoExt.buildTypes.defaultConfig
+        if (anarchoExt.buildTypes.hasProperty(variant.name)) {
+            def overrideConfig = anarchoExt.buildTypes.getByName(variant.name)
+            config.update(overrideConfig)
+        }
         println("\n\nUploading: ${variant.outputs.outputFile}")
-        variant.outputs.outputFile.each {
-            uploadBuild(conf.uploadUrl, it, "empty", conf.apiToken)
+        String uploadUrl = "${anarchoExt.host}/api/apps/${config.appKey}".replaceAll("//api", "/api")
+        variant.outputs.outputFile.each { apkFile ->
+            uploadBuild(uploadUrl, apkFile, config.releaseNotes, config.apiToken)
         }
     }
 

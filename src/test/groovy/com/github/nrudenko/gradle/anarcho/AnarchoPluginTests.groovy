@@ -2,13 +2,11 @@ package com.github.nrudenko.gradle.anarcho
 
 import com.github.nrudenko.gradle.anarcho.fixtures.extensions.AppExtension
 import com.github.nrudenko.gradle.anarcho.fixtures.extensions.ApplicationVariant
+import org.gradle.api.internal.FactoryNamedDomainObjectContainer
 import org.junit.Before
 import org.junit.Test
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.api.Project
-
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 import static org.junit.Assert.*
 
@@ -25,17 +23,41 @@ class AnarchoPluginTests {
         def ext = project.extensions.create("android", AppExtension)
         ext.addApplicationVariant(new ApplicationVariant("Debug"))
         ext.addApplicationVariant(new ApplicationVariant("Release"))
-
         project.apply plugin: AnarchoPlugin
     }
 
     @Test
     public void hasCorrectAnarchoExtFields() {
-        def anarchoExt = project.extensions.findByName('anarcho')
-        def allExtFields = ['__mapping__', '__dyn_obj__', '__uploadUrl__', '__apiToken__', '__releaseNotesFile__']
-        def fields = anarchoExt.class.declaredFields
-        assertEquals('Wrong ext fields count', allExtFields.size(), fields.size())
-        fields.each { assertTrue("Field ${it.name} not found in ext", allExtFields.contains(it.name)) }
+        AnarchoExtension anarchoExt = project.extensions.findByName("anarcho")
+        def expectedProperties = ["class", "buildTypes", "host"]
+        def actualProperties = anarchoExt.properties
+        assertEquals('Wrong ext actualProperties count', expectedProperties.size(), actualProperties.size())
+        actualProperties.collect {
+            key, value ->
+                assertTrue("Field ${key} not found in ext", expectedProperties.contains(key))
+        }
+    }
+
+    @Test
+    public void hasCorrectBuildTypes() {
+        AnarchoExtension anarcho = project.extensions.findByName('anarcho')
+        anarcho.with {
+            host = "asd"
+            buildTypes {
+                defaultConfig {
+                    appKey = "defaultAppKey"
+                    apiToken = "defaultApiToken"
+                }
+                release {
+                    appKey = "d3e846b2-c431-11e4-baef-62dd4457b65e"
+                    apiToken = "66c9dd080128d16cc3fa3fdd04da0d71"
+                }
+            }
+        }
+
+        AnarchoExtension anarchoExt = project.extensions.findByName("anarcho")
+        FactoryNamedDomainObjectContainer<AppConfig> buildTypes = anarchoExt.buildTypes
+        assertEquals('Wrong buildTypesCount count', 2, buildTypes.size())
     }
 
     @Test
